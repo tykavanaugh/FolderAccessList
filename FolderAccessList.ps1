@@ -1,9 +1,11 @@
-﻿$folderName = Read-Host -Prompt 'Input folder name'
+$folderName = Read-Host -Prompt 'Input folder name'
+$driveName = "\\hgfs2\Shared\"
 $output = "Groups with access:`n"
 net use S:
-Set-Location \\hgfs2\Shared\
+net use N:
+Set-Location $driveName
 
-$accessGroupsRaw = (Get-Acl "\\hgfs2\Shared\$foldername").Access
+$accessGroupsRaw = (Get-Acl "$driveName$foldername").Access
 
 $i = 0
 for (;$i -le ($accessGroupsRaw.Count - 1);$i++){
@@ -13,7 +15,12 @@ for (;$i -le ($accessGroupsRaw.Count - 1);$i++){
         $output = $output + $name + "`n---------`n"
         $members = Get-ADGroupMember -Identity $name | select Name
         foreach($member in $members){
-            $output = $output + $member.Name + "`n"
+            $memberName = $member.Name
+            $memberName = $memberName.Replace("'","''")
+            $memberObject = Get-ADUser -Filter "Name -eq '$memberName'"
+            if ($memberObject.Enabled -eq $true){
+                $output = $output + $member.Name + "`n"
+                }
             }
         $output = $output + $members + "`n"
         }
