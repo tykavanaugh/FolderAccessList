@@ -1,6 +1,6 @@
 $folderName = Read-Host -Prompt 'Input folder name'
-$driveName = "\\hgfs2\Shared\"
-$output = "Groups with access:`n"
+$driveName = "" #update me
+$output = "Groups with access:`n`n"
 net use S:
 net use N:
 Set-Location $driveName
